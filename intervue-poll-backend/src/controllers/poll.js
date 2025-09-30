@@ -1,0 +1,33 @@
+const Poll = require("../models/poll");
+
+// When a teacher sends the data for a new poll, it takes that data and creates a poll
+exports.createPoll = async (pollData) => {
+  let newPoll = await Poll(pollData);
+  newPoll.save();
+  return newPoll;
+};
+
+exports.voteOnOption = async (pollId, optionText) => {
+  try {
+    const poll = await Poll.findOneAndUpdate(
+      // Find the exact option in the exact poll
+      { _id: pollId, "options.text": optionText },
+      // Increment the vote count by 1
+      { $inc: { "options.$.votes": 1 } },
+      { new: true }
+    );
+
+    console.log("Vote registered successfully:", poll);
+  } catch (error) {
+    console.error("Error registering vote:", error);
+  }
+};
+
+// display a teacher's poll history
+exports.getPolls = async (req, res) => {
+  let { teacherUsername } = req.params;
+  let data = await Poll.find({ teacherUsername });
+  res.status(200).json({
+    data,
+  });
+};
