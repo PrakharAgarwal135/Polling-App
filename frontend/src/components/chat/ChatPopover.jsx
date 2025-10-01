@@ -43,9 +43,6 @@ const ChatPopover = () => {
       setNewMessage("");
     }
   };
-  const handleKickOut = (participant, index) => {
-    socket.emit("kickOut", participant);
-  };
 
   const participantsTab = (
     <div style={{ maxHeight: "300px", overflowY: "auto" }}>
